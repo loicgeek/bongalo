@@ -1,5 +1,8 @@
-import 'package:bongalo_recruitment/utils/validators.dart';
+import 'package:bongalo_recruitment/auth/screens/otp_verification_screen.dart';
+import 'package:bongalo_recruitment/utils/app_colors.dart';
+import 'package:bongalo_recruitment/widgets/app_button.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -9,128 +12,206 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late TextEditingController _usernameController;
-  late TextEditingController _emailController;
-  late TextEditingController _passwordController;
+  bool showPhone = false;
 
-  @override
-  void initState() {
-    _usernameController = TextEditingController();
-    _emailController = TextEditingController();
-    _passwordController = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  final TextEditingController controller = TextEditingController();
+  String initialCountry = 'CM';
+  String? phone;
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
-          child: ListView(
-            children: [
-              SizedBox(
-                height: 100,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 10,
+      body: Stack(
+        children: [
+          Container(
+            height: screenHeight,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  "assets/images/login_bg.png",
                 ),
-                child: Image.asset("assets/images/bongalo.png"),
+                fit: BoxFit.fill,
               ),
-              SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    labelText: "Username",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  validator: (value) {
-                    return Validators.required("Username", value);
-                  },
+            ),
+          ),
+          Container(
+            height: screenHeight,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  "assets/images/login_filter.png",
                 ),
+                fit: BoxFit.cover,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    labelText: "Email",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                ),
+            ),
+          ),
+          SingleChildScrollView(
+            child: Container(
+              height: screenHeight,
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 20,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    labelText: "Password",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  validator: (value) {
-                    return Validators.validatePassword(
-                        value, _usernameController.text);
-                  },
-                  obscureText: true,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              GestureDetector(
-                onTap: () {
-                  _formKey.currentState!.validate();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: Colors.blue,
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Register",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: screenHeight * .12,
                         ),
+                        if (!showPhone)
+                          RichText(
+                            text: TextSpan(
+                              text: "Book ",
+                              style: TextStyle(
+                                fontSize: 37,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: .2,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: "ahead ",
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontSize: 37,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: .2,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "your next trip or vacation",
+                                  style: TextStyle(
+                                    fontSize: 37,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1,
+                                    letterSpacing: .2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (showPhone)
+                          Text(
+                            "Create Account ",
+                            style: TextStyle(
+                              fontSize: 37,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: .2,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        SizedBox(
+                          height: screenHeight * .12,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (!showPhone) ...[
+                            AppButton(
+                              text: "Create Account",
+                              onTap: () {
+                                setState(() {
+                                  showPhone = !showPhone;
+                                });
+                              },
+                            ),
+                            AppButton(
+                              text: "Login",
+                              bgColor: Colors.white,
+                              textColor: AppColors.primary,
+                            ),
+                          ],
+                          if (showPhone) ...[
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              child: InternationalPhoneNumberInput(
+                                onInputChanged: (PhoneNumber number) {
+                                  phone = number.phoneNumber!
+                                      .replaceFirst(number.dialCode!, "");
+                                  setState(() {});
+                                },
+                                spaceBetweenSelectorAndTextField: 0,
+                                onInputValidated: (bool value) {},
+                                ignoreBlank: true,
+                                hintText: "70353457753",
+                                autoValidateMode: AutovalidateMode.disabled,
+                                initialValue: PhoneNumber(isoCode: 'NG'),
+                                textFieldController: controller,
+                                selectorConfig: SelectorConfig(
+                                  selectorType: PhoneInputSelectorType.DROPDOWN,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            AppButton(
+                              text: "Continue",
+                              disabled: (phone == null ||
+                                  (phone != null && phone!.isEmpty)),
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        OtpVerificationScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 17.0),
+                            child: Text(
+                              "Or",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          AppButton(
+                            text: "Continue with Apple",
+                            bgColor: Colors.white,
+                            textColor: AppColors.primaryText,
+                            leading: Image.asset(
+                              "assets/images/apple_logo.png",
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          AppButton(
+                            text: "Continue with Google",
+                            bgColor: Colors.white,
+                            textColor: AppColors.primaryText,
+                            leading: Image.asset(
+                              "assets/images/google_logo.png",
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
